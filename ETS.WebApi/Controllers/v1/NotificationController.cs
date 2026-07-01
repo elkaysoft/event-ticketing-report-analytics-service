@@ -22,7 +22,7 @@ namespace ETS.WebApi.Controllers.v1
         [HttpGet("email-logs")]
         [ProducesResponseType(typeof(PaginatedList<GetPagedNotificatonDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAllActiveEvents([FromQuery] NotificationLogFilter request)
+        public async Task<IActionResult> GetEmailLogs([FromQuery] NotificationLogFilter request)
         {
             var query = new GetPagedNotificationQuery(request.SearchText,
                 request.Status,

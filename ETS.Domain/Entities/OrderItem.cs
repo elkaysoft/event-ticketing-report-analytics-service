@@ -4,9 +4,7 @@ using ETS.Domain.Enums;
 namespace ETS.Domain.Entities
 {
     public class OrderItem : Entity<Guid>
-    {
-        
-
+    {       
         public Guid OrderId { get; private set; }
         public Guid EventCategoryId { get; private set; }
         public string Title { get; private set; } = string.Empty;

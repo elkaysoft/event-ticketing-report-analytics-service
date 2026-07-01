@@ -4,6 +4,7 @@ using ETS.Application.Behaviours;
 using ETS.Domain.AppConfig;
 using ETS.Domain.Contracts;
 using ETS.Infrastructure.Authentication;
+using ETS.Infrastructure.Data;
 using ETS.Infrastructure.Persistence;
 using ETS.Infrastructure.Services;
 using ETS.WebApi.Extensions;
@@ -177,8 +178,11 @@ namespace ETS.Infrastructure
         public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services,
            IConfiguration configuration)
         {
+            string? connString = configuration.GetConnectionString("AppDbConnection");
             services.AddDbContextFactory<ApplicationDbContext>(opt => opt
-                        .UseSqlServer(configuration.GetConnectionString("AppDbConnection")));
+                        .UseSqlServer(connString));
+
+            services.AddSingleton<ISqlConnectionFactory>(_ => new SqlConnectionFactory(connString!));
 
             var originStr = configuration.GetSection("AllowedOrigins").Get<string>();
             var allowedOrigins = string.IsNullOrEmpty(originStr)
