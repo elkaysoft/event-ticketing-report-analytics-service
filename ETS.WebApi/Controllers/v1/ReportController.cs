@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ETS.WebApi.Controllers
+namespace ETS.WebApi.Controllers.v1
 {
     [Route("api/v1/[controller]")]
     [ApiController]

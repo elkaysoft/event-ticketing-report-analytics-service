@@ -232,6 +232,7 @@ namespace ETS.Infrastructure
         private static IServiceCollection AddAuthenticationSection(this IServiceCollection services,
            IConfiguration configuration)
         {
+            services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
             services.Configure<AuthenticationOptions>(configuration.GetSection("Authentication"));
             services.AddScoped<IUserContext, ETS.Infrastructure.Authentication.UserContext>();
 

@@ -1,4 +1,5 @@
 ﻿using ETS.Application.TicketNotification.Queries.ProcessTicketNotification;
+using ETS.Domain.AppConfig;
 using ETS.Domain.Entities;
 using ETS.Infrastructure.Persistence;
 using MediatR;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace ETS.Application.TicketNotification.BackgroundServices
 {
@@ -14,22 +16,30 @@ namespace ETS.Application.TicketNotification.BackgroundServices
         private readonly ILogger<TicketGenerationService> _logger;
         private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly AppSettings _appSettings;
 
-        private const int MaxRetryCount = 3;
-        private readonly TimeSpan _idleDelay = TimeSpan.FromSeconds(600);
+        private int MaxRetryCount;
+        private readonly TimeSpan _idleDelay; 
         private readonly TimeSpan _activeDelay = TimeSpan.FromSeconds(0); // Poll instantly if there is more work
-        private readonly TimeSpan _coolDownDelay = TimeSpan.FromSeconds(5); // Breather delay
+        private readonly TimeSpan _coolDownDelay;
 
-        private const int MaxBatchSize = 5; // Items processsed per single database trip
-        private const int MaxBatchesPerBurst = 10; // Maximum number of consecutive batches allowed (50 items total)
+        private const int MaxBatchSize = 5; 
+        private const int MaxBatchesPerBurst = 10; 
 
         public TicketGenerationService(ILogger<TicketGenerationService> logger,
             IServiceScopeFactory serviceScopeFactory,
-            IDbContextFactory<ApplicationDbContext> contextFactory)
+            IDbContextFactory<ApplicationDbContext> contextFactory,
+            IOptions<AppSettings> appSettings)
         {
             _logger = logger;
             _serviceScopeFactory = serviceScopeFactory;
             _contextFactory = contextFactory;
+            _appSettings = appSettings.Value;
+
+            MaxRetryCount = _appSettings.MaxRetryCount;
+            _idleDelay = TimeSpan.FromSeconds(_appSettings.IdleDelay);
+            _coolDownDelay = TimeSpan.FromSeconds(_appSettings.CoolDownDelay);
+            
         }
 
 
