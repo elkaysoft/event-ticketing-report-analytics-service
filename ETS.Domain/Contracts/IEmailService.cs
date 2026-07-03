@@ -5,6 +5,6 @@ namespace ETS.Domain.Contracts
 {
     public interface IEmailService
     {
-        Task<SendEmailResponse> SendEmail(SendEmailRequest request, CancellationToken cancellationToken);
+        Task<SendEmailResponse> SendEmailAsync(SendEmailRequest request, CancellationToken cancellationToken);
     }
 }

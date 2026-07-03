@@ -1,4 +1,5 @@
 ﻿using ETS.Application.Helpers;
+using ETS.Application.TicketNotification.Commands.ResendNotification;
 using ETS.Application.TicketNotification.Queries.GetPagedNotification;
 using ETS.Domain.Contracts;
 using ETS.Domain.Errors;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ETS.WebApi.Controllers.v1
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class NotificationController : AuthControllerBase<NotificationController>
     {
@@ -28,6 +29,14 @@ namespace ETS.WebApi.Controllers.v1
                 request.Status,
                 request.SortField);
             var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("resend/{Id}")]
+        public async Task<IActionResult> ResendNotification(long Id)
+        {
+            var command = new ResendNotificationCommand(Id);
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
 

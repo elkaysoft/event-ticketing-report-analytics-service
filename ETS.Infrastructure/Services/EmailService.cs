@@ -24,7 +24,7 @@ namespace ETS.Infrastructure.Services
         }
 
 
-        public async Task<SendEmailResponse> SendEmail(SendEmailRequest request, CancellationToken cancellationToken)
+        public async Task<SendEmailResponse> SendEmailAsync(SendEmailRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -33,6 +33,11 @@ namespace ETS.Infrastructure.Services
                     ["X-Postmark-Server-Token"] = _postmarkConfig.ServerToken,
                     ["Accept"] = "application/json"
                 };
+
+                if(_postmarkConfig.Environment.ToUpper() == "TEST")
+                {
+                    request.To = _postmarkConfig.TestEmailAddress;
+                }
 
                 var emailResult = await _httpClient.PostAsync(_postmarkConfig.BaseUrl,
                     request,
@@ -50,7 +55,7 @@ namespace ETS.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"An error occured at {nameof(SendEmail)}");
+                _logger.LogError(ex, $"An error occured at {nameof(SendEmailAsync)}");
                 return new SendEmailResponse { ErrorCode = 21, Message = "An error occured, pls try again later" };
             }
         }

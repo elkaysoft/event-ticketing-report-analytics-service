@@ -65,11 +65,7 @@ namespace ETS.Application.TicketNotification.Queries.ProcessTicketNotification
             string subject = $"Your ticket for {emailData.EventTitle} is confirmed";
 
             var emailRequest = new SendEmailRequest { HtmlBody = emailBody, Subject = subject, To = emailData.CustomerEmail, From = postmarkOption.Value.SenderEmail };
-
-            if (postmarkOption.Value.Environment.ToUpper() == "TEST")
-            {
-                emailRequest.To = postmarkOption.Value.TestEmailAddress;
-            }
+                        
 
             orderItem.SetQRCodeUrl(qrCodeUrl);
             var emailLog = EmailLog.Create(emailRequest.From, emailData.CustomerEmail, subject, emailBody);
@@ -78,12 +74,12 @@ namespace ETS.Application.TicketNotification.Queries.ProcessTicketNotification
 
             _logger.LogInformation("About to process ticket notification for {0}", orderItem.Id);
             
-            var emailPushResult = await _emailService.SendEmail(emailRequest, cancellationToken);
+            var emailPushResult = await _emailService.SendEmailAsync(emailRequest, cancellationToken);
 
             _logger.LogInformation($"Email delivery response for {JsonSerializer.Serialize(emailPushResult)}");
 
             var notificationStatus = emailPushResult.Message.Equals("OK") ? NotificationStatusEnum.Sent : NotificationStatusEnum.Failed;
-            emailLog.UpdateNotificationStatus(JsonSerializer.Serialize(emailPushResult), notificationStatus);
+            emailLog.UpdateNotificationStatus(notificationStatus, JsonSerializer.Serialize(emailPushResult));
             _context.EmailLogs.Update(emailLog);
             await _context.SaveChangesAsync(cancellationToken);
 

@@ -14,6 +14,7 @@ namespace ETS.Domain.Entities
         public string? ResponseData { get; private set; }
         public int RetryCount { get; private set; }
 
+
         public static EmailLog Create(string sender, string recipient, string subject, string body)
         {
             return new EmailLog
@@ -23,12 +24,12 @@ namespace ETS.Domain.Entities
                 Subject = subject,
                 Body = body,
                 NotificationStatus = NotificationStatusEnum.Pending,
-                NotificationTarget = NotificationTargetEnum.TicketReceipt
+                NotificationTarget = NotificationTargetEnum.TicketReceipt                
             };
-        }
+        }               
 
 
-        public void UpdateNotificationStatus(string responseData, NotificationStatusEnum notificationStatus)
+        public void UpdateNotificationStatus(NotificationStatusEnum notificationStatus, string? responseData = null)
         {
             ResponseData = responseData;
             NotificationStatus = notificationStatus;

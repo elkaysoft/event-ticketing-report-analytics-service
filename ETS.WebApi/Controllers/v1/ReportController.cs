@@ -19,12 +19,6 @@ namespace ETS.WebApi.Controllers.v1
         {
         }
 
-        [HttpGet("ping")]
-        public IActionResult Ping()
-        {
-            return Ok("Ping successful");
-        }
-
         [HttpGet("ticket-analytics")]
         [ProducesResponseType(typeof(GetTransactionReportResponse), StatusCodes.Status200OK)]        
         public async Task<IActionResult> GetTransactionReport([FromQuery] ReportRequest request)
